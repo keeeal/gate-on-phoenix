@@ -28,19 +28,19 @@ ssh-copy-id a1234567@phoenix.adelaide.edu.au
 
 ## Copying files/folders to/from Phoenix
 
-#### Copy file to phoenix:
+#### Copy file to phoenix
 
 ```
 scp path/to/file.txt a1234567@phoenix.adelaide.edu.au:path/to/destination.txt
 ```
 
-#### Copy folder to Phoenix:
+#### Copy folder to Phoenix
 
 ```
 scp -r path/to/folder a1234567@phoenix.adelaide.edu.au:path/to/destination
 ```
 
-#### Copy files/folders from Phoenix:
+#### Copy files/folders from Phoenix
 
 ```
 scp [-r] a1234567@phoenix.adelaide.edu.au:path/to/source path/to/destination
@@ -60,13 +60,13 @@ For larger, longer-term projects use [git](https://rogerdudler.github.io/git-gui
 - Your *home* directory has ~10GB of storage and should not be used for active job data. 
 - Your *fast* directory has 1TB of storage and is intended for active job data.
 
-#### Check your current disk usage:
+#### Check your current disk usage
 
 ```
 rcdu
 ```
 
-#### Access your *fast* directory:
+#### Access your *fast* directory
 
 ```
 cd /fast/users/a1234567
@@ -105,19 +105,19 @@ scp file a1608007@phoenix.adelaide.edu.au:fast/file
 
  - Phoenix uses [Lmod](https://lmod.readthedocs.io/en/latest/) to manage software.
  
-#### List everything that is available:
+#### List everything that is available
 
 ```
 module avail
 ```
 
-#### Search for a package:
+#### Search for a package
 
 ```
 module spider keyword
 ```
 
-#### Load a package:
+#### Load a package
 
 ```
 module load package-name
@@ -138,7 +138,7 @@ project
 └─── main.mac
 ```
 
-#### Create `gate.txt`:
+#### Create `gate.txt`
 
 ```
 project
@@ -153,7 +153,7 @@ project
 exit
 ```
 
-#### Create `run.sh`:
+#### Create `run.sh`
 
 ```
 project
@@ -264,16 +264,10 @@ scancel -u a1234567
 
 #### Install Python packages
 
- 1. [scikit-image](https://scikit-image.org/)
+[scikit-image](https://scikit-image.org/), [simpleitk](https://simpleitk.org/)
 
 ```
-pip install scikit-image
-```
-
-2. [simpleitk](https://simpleitk.org/)
-
-```
-pip install simpleitk
+pip install scikit-image simpleitk
 ```
 
 <details>
