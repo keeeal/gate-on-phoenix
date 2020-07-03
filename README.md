@@ -10,7 +10,7 @@ A tutorial and code for running GATE on Phoenix
 
 ### Logging into Phoenix
 
-```bash
+```sh
 ssh a1234567@phoenix.adelaide.edu.au
 ```
 
