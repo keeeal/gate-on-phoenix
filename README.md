@@ -1,4 +1,4 @@
-# Gate on Phoenix
+# GATE on Phoenix
 A tutorial and code for running GATE on Phoenix
 
 ## Resources
@@ -6,22 +6,27 @@ A tutorial and code for running GATE on Phoenix
  - [The Phoenix HPC Wiki](https://wiki.adelaide.edu.au/hpc/index.php/Main_Page)
  - [Compiling GATE Instructions](https://opengate.readthedocs.io/en/latest/compilation_instructions.html)
 
-## Cheat Sheet
+# Cheat Sheet
 
-### Logging into Phoenix
+## Logging into Phoenix
 
 ```
 ssh a1234567@phoenix.adelaide.edu.au
 ```
 
-*Recommendation:* Set up [SSH keys](https://www.digitalocean.com/community/tutorials/ssh-essentials-working-with-ssh-servers-clients-and-keys) for better security and not having to type your password:
+<details>
+<summary>Tip</summary>
+  
+Set up [SSH keys](https://www.digitalocean.com/community/tutorials/ssh-essentials-working-with-ssh-servers-clients-and-keys) for better security and not having to type your password:
 
 ```
 ssh-keygen
 ssh-copy-id a1234567@phoenix.adelaide.edu.au
 ```
+  
+</details>
 
-### Copying files/folders to/from Phoenix
+## Copying files/folders to/from Phoenix
 
 #### Copy file to phoenix:
 
@@ -41,10 +46,25 @@ scp -r path/to/folder a1234567@phoenix.adelaide.edu.au:path/to/destination
 scp [-r] a1234567@phoenix.adelaide.edu.au:path/to/source path/to/destination
 ```
 
-### Data management on Phoenix
+<details>
+<summary>Tip</summary>
+  
+Check out [rsync](https://www.digitalocean.com/community/tutorials/how-to-use-rsync-to-sync-local-and-remote-directories-on-a-vps), an alternative to `scp` that only copies files that have been updated.
+  
+For larger, longer-term projects use [git](https://rogerdudler.github.io/git-guide/) and GitHub for version control.
+  
+</details>
+
+## Data management on Phoenix
 
 - Your *home* directory has ~10GB of storage and should not be used for active job data. 
 - Your *fast* directory has 1TB of storage and is intended for active job data.
+
+#### Check your current disk usage:
+
+```
+rcdu
+```
 
 #### Access your *fast* directory:
 
@@ -58,15 +78,32 @@ or
 cd $FASTDIR
 ```
 
-#### Check your current disk usage:
+<details>
+<summary>Tip</summary>
+  
+Create a [symbolic link](https://kb.iu.edu/d/abbe) to your fast directory in your home directory
 
 ```
-rcdu
+ln -s /fast/users/a1234567 ~/fast
 ```
 
-### Software on Phoenix
+so that you can shorten your `scp` commands from
 
- - Phoenix uses `module` to manage software.
+```
+scp file a1608007@phoenix.adelaide.edu.au:/fast/users/a1608007/file
+```
+
+to
+
+```
+scp file a1608007@phoenix.adelaide.edu.au:fast/file
+```
+  
+</details>
+
+## Software on Phoenix
+
+ - Phoenix uses [Lmod](https://lmod.readthedocs.io/en/latest/) to manage software.
  
 #### List everything that is available:
 
@@ -86,16 +123,15 @@ module spider keyword
 module load package-name
 ```
 
-### Loading GATE on Phoenix
+## Loading GATE on Phoenix
 
  - GATE is not up to date and has missing data dependencies.
- - Currently only usable when compiled from source.
 
-Simplified instructions coming soon.
+Instructions for compilating from source coming soon.
 
-### Directory structure
+## Creating a run script
 
- - Suppose you have folder of GATE code that is run by executing `main.mac`.
+ - Suppose you have a folder of GATE code that is run by executing `main.mac`.
 
 ```
 project
@@ -110,7 +146,7 @@ project
 └─── gate.txt
 ```
 
-`gate.txt` contains the initial GATE commands to execute:
+`gate.txt` contains the initial GATE command to execute and exits when done:
 
 ```
 /control/execute main.mac
@@ -121,9 +157,9 @@ exit
 
 ```
 project
-├── main.mac
-├── gate.txt
-└── run.sh
+├─── main.mac
+├─── gate.txt
+└─── run.sh
 ```
 
 `run.sh` creates an output directory from an argument and runs the GATE code:
@@ -136,11 +172,26 @@ export OUTPUTDIR=output/$1
 rm -rf $OUTPUTDIR
 mkdir -p $OUTPUTDIR
 
-# Run
+# run
 Gate < gate.txt
 ```
 
-### Job scripts
+## Setting the output directory in GATE
+
+#### Get an environment variable in GATE
+
+```
+/control/getEnv OUTPUTDIR
+```
+
+#### Use an environment variable in GATE
+
+```
+gate/actor/addActor DoseActor dose
+/gate/actor/dose/save {OUTPUTDIR}/output.mhd
+```
+
+## Jobs
 
  - Keep time/memory limits close to expected usage for better queue priority.
  - Pass job ID and array task ID (index) to run.sh for distinct output locations.
@@ -149,10 +200,10 @@ Gate < gate.txt
 
 ```
 project
-├── main.mac
-├── gate.txt
-├── run.sh
-└── job.sh
+├─── main.mac
+├─── gate.txt
+├─── run.sh
+└─── job.sh
 ```
 
 `job.sh` describes your workload to the job queue:
@@ -167,15 +218,15 @@ project
 #SBATCH --mem=512MB
 #SBATCH --array=1-64
 
-# Notifications
+# notifications
 #SBATCH --mail-type=END
 #SBATCH --mail-type=FAIL
 #SBATCH --mail-user=a1234567@adelaide.edu.au
 
-# Load modules
+# load modules
 module load GATE/7.2-foss-2015b
 
-# Run
+# run
 ./run.sh ${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}
 ```
 
@@ -191,13 +242,17 @@ sbatch job.sh
 squeue -u a1234567
 ```
 
+#### Check the progress of a GATE simulation
+
+```
+cat $OUTPUTDIR/output-stat.txt
+```
+
 #### Cancel a job
 
 ```
-scancel 9999
+scancel JOB_ID
 ```
-
-where `9999` is the job ID.
 
 #### Cancel all of your jobs
 
@@ -205,7 +260,38 @@ where `9999` is the job ID.
 scancel -u a1234567
 ```
 
-### GATE output
+## Handling GATE output
 
-Coming soon.
+#### Install Python packages
+
+ 1. [scikit-image](https://scikit-image.org/)
+
+```
+pip install scikit-image
+```
+
+2. [simpleitk](https://simpleitk.org/)
+
+```
+pip install simpleitk
+```
+
+<details>
+<summary>Tip</summary>
+  
+When scikit-image is installed using [Anaconda](https://www.anaconda.com/products/individual) it also installs low-level libraries that increase performance:
+
+```
+conda install scikit-image
+```
+  
+</details>
+
+#### Read MHD files with python
+
+```
+from skimage import io
+array = io.imread(path, plugin='simpleitk')
+```
+
 
