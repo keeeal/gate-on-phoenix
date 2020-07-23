@@ -4,7 +4,6 @@ A tutorial and code for running GATE on Phoenix
 ## Resources
 
  - [The Phoenix HPC Wiki](https://wiki.adelaide.edu.au/hpc/index.php/Main_Page)
- - [Compiling GATE Instructions](https://opengate.readthedocs.io/en/latest/compilation_instructions.html)
 
 # Cheat Sheet
 
@@ -16,14 +15,14 @@ ssh a1234567@phoenix.adelaide.edu.au
 
 <details>
 <summary>Tip</summary>
-  
+
 Set up [SSH keys](https://www.digitalocean.com/community/tutorials/ssh-essentials-working-with-ssh-servers-clients-and-keys) for better security and not having to type your password:
 
 ```
 ssh-keygen
 ssh-copy-id a1234567@phoenix.adelaide.edu.au
 ```
-  
+
 </details>
 
 ## Copying files/folders to/from Phoenix
@@ -48,16 +47,16 @@ scp [-r] a1234567@phoenix.adelaide.edu.au:path/to/source path/to/destination
 
 <details>
 <summary>Tip</summary>
-  
+
 Check out [rsync](https://www.digitalocean.com/community/tutorials/how-to-use-rsync-to-sync-local-and-remote-directories-on-a-vps), an alternative to `scp` that only copies files that have been updated.
-  
+
 For larger, longer-term projects use [git](https://rogerdudler.github.io/git-guide/) and GitHub for version control.
-  
+
 </details>
 
 ## Data management on Phoenix
 
-- Your *home* directory has ~10GB of storage and should not be used for active job data. 
+- Your *home* directory has ~10GB of storage and should not be used for active job data.
 - Your *fast* directory has 1TB of storage and is intended for active job data.
 
 #### Check your current disk usage
@@ -80,7 +79,7 @@ cd $FASTDIR
 
 <details>
 <summary>Tip</summary>
-  
+
 Create a [symbolic link](https://kb.iu.edu/d/abbe) to your fast directory in your home directory
 
 ```
@@ -98,13 +97,13 @@ to
 ```
 scp file a1608007@phoenix.adelaide.edu.au:fast/file
 ```
-  
+
 </details>
 
 ## Software on Phoenix
 
  - Phoenix uses [Lmod](https://lmod.readthedocs.io/en/latest/) to manage software.
- 
+
 #### List everything that is available
 
 ```
@@ -123,11 +122,15 @@ module spider keyword
 module load package-name
 ```
 
-## Loading GATE on Phoenix
+## Loading GATE
 
- - GATE is not up to date and has missing data dependencies.
+At the time of writing the latest version of GATE on Phoenix is 8.2.
 
-Instructions for compilating from source coming soon.
+```
+module load GATE/8.2-foss-2016b-c11-Python-2.7.13
+```
+
+This also loads GATE's dependencies, including Geant4 10.5 and ROOT 6.09.02.
 
 ## Creating a run script
 
@@ -153,6 +156,12 @@ project
 exit
 ```
 
+This provides a simple way of starting a simulation from the command line:
+
+```
+Gate < "gate.txt"
+```
+
 #### Create `run.sh`
 
 ```
@@ -176,20 +185,28 @@ mkdir -p $OUTPUTDIR
 Gate < gate.txt
 ```
 
+This allows different runs to have different output directories, eg:
+
+```
+./run.sh output_1
+```
+
 ## Setting the output directory in GATE
 
-#### Get an environment variable in GATE
+#### Get the environment variable in GATE
 
 ```
 /control/getEnv OUTPUTDIR
 ```
 
-#### Use an environment variable in GATE
+#### Use the environment variable in GATE
 
 ```
 gate/actor/addActor DoseActor dose
 /gate/actor/dose/save {OUTPUTDIR}/output.mhd
 ```
+
+This sets the output to the correct directory.
 
 ## Jobs
 
@@ -224,7 +241,7 @@ project
 #SBATCH --mail-user=a1234567@adelaide.edu.au
 
 # load modules
-module load GATE/7.2-foss-2015b
+module load GATE/8.2-foss-2016b-c11-Python-2.7.13
 
 # run
 ./run.sh ${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}
@@ -272,13 +289,13 @@ pip install scikit-image simpleitk
 
 <details>
 <summary>Tip</summary>
-  
+
 When scikit-image is installed using [Anaconda](https://www.anaconda.com/products/individual) it also installs low-level libraries that increase performance:
 
 ```
 conda install scikit-image
 ```
-  
+
 </details>
 
 #### Read MHD files with python
@@ -287,5 +304,3 @@ conda install scikit-image
 from skimage import io
 array = io.imread(path, plugin='simpleitk')
 ```
-
-
