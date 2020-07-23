@@ -247,6 +247,8 @@ module load GATE/8.2-foss-2016b-c11-Python-2.7.13
 ./run.sh ${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}
 ```
 
+This ensures that each job and array task get a unique output directory.
+
 #### Submit a job
 
 ```
