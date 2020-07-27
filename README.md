@@ -89,13 +89,13 @@ ln -s /fast/users/a1234567 ~/fast
 so that you can shorten your `scp` commands from
 
 ```
-scp file a1608007@phoenix.adelaide.edu.au:/fast/users/a1608007/file
+scp file a1234567@phoenix.adelaide.edu.au:/fast/users/a1234567/file
 ```
 
 to
 
 ```
-scp file a1608007@phoenix.adelaide.edu.au:fast/file
+scp file a1234567@phoenix.adelaide.edu.au:fast/file
 ```
 
 </details>
